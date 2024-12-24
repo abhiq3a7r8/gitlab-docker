@@ -1,0 +1,78 @@
+1. Create a directory for GitLab 
+2. Create a docker compose file in that directory 
+>> nano docker-compose.yml 
+
+3. Add the following configuration to the yml file 
+--------------------------------------------------------------------------------
+version: '3.6'
+services:
+  gitlab:
+    image: gitlab/gitlab-ee:<version>-ee.0
+    container_name: gitlab
+    restart: always
+    hostname: 'gitlab.example.com'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        # Add any other gitlab.rb configuration here, each on its own line
+        external_url 'https://gitlab.example.com'
+    ports:
+      - '80:80'
+      - '443:443'
+      - '22:22'
+    volumes:
+      - '$GITLAB_HOME/config:/etc/gitlab'
+      - '$GITLAB_HOME/logs:/var/log/gitlab'
+      - '$GITLAB_HOME/data:/var/opt/gitlab'
+    shm_size: '256m'
+--------------------------------------------------------------------------------
+note: change replace the hostname with http://<ip-address>:<port> of the server
+note: change the port numbers
+
+4. Save the file, and use docker compose up command
+>> docker compose up -d 
+
+5. After the container has started , go to the terminal container
+>> docker exec -it <container-id> sh
+
+6. Start the GitLab service
+>> gitlab-ctl start
+
+7. go to http://<ip-address>:<port> , wait for GitLab to boot
+
+8. Enter the Credentials
+   default username: root
+   default password: saved at /etc/gitlab/initial_root_password inside the GitLab container
+
+9. after successfully logging in, create a new group 
+   create a new repository in that group 
+this is remote git repository where code will be stored and be accessible to developers working in the repository 
+
+make sure git is installed on your machine 
+
+10. go to your local project folder 
+
+11. initialize git 
+>> git init 
+
+12. Connect to the remote repository 
+>> git remote add <repository-url>.git
+
+12. add the project files to git
+>> git add <file-name> 
+note: to add all the files in directory use 
+>> git add .
+
+13. Create a main branch using 
+>> git branch -M main
+
+14. commit files using 
+>> git commit -m "commit message"
+
+15. Push files to server using 
+>> git push -f origin main
+
+note: in case of pre-receive hook declined error
+1. go to Settings > Repository > protected branches 
+2. locate the main branch 
+3. choose unprotect the branch
+4. allow force push to the branc

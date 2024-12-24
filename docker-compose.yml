@@ -1,0 +1,17 @@
+version: '3.6'
+services:
+  gitlab:
+    image: gitlab/gitlab-ee:latest
+    container_name: gitlab
+    restart: always
+    hostname: 'localhost' # Use only the hostname, no protocol or port
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://localhost:3000'
+    ports:
+      - '3000:3000' # Maps host port 3000 to container port 3000
+    volumes:
+      - '${GITLAB_HOME}/config:/etc/gitlab'
+      - '${GITLAB_HOME}/logs:/var/log/gitlab'
+      - '${GITLAB_HOME}/data:/var/opt/gitlab'
+    shm_size: '256m'
